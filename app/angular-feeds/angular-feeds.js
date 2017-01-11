@@ -1,8 +1,8 @@
 /**
- * angular-feeds - v0.0.4 - 2015-11-03 10:13 AM
+ * angular-feeds - v0.0.5 - 2017-01-11 11:55 AM
  * https://github.com/siddii/angular-feeds
  *
- * Copyright (c) 2015 
+ * Copyright (c) 2017 
  * Licensed MIT <https://github.com/siddii/angular-feeds/blob/master/LICENSE.txt>
  */
 'use strict';
@@ -23,6 +23,7 @@ angular.module('feeds-directives', []).directive('feed', ['feedService', '$compi
       });
 
       $scope.feeds = [];
+      $scope.count = $attrs.count;
 
       var spinner = $templateCache.get('feed-spinner.html');
       $element.append($compile(spinner)($scope));
@@ -53,7 +54,7 @@ angular.module('feeds-directives', []).directive('feed', ['feedService', '$compi
         }).finally(function () {
           $element.find('.spinner').slideUp();
           $scope.$evalAsync('finishedLoading = true')
-        });          
+        });
       });
     }]
   }
@@ -89,13 +90,7 @@ angular.module('feeds-services', []).factory('feedService', ['$q', '$sce', 'feed
         deferred.resolve(entries);
       }
 
-      var feed = new google.feeds.Feed(feedURL);
-      if (count) {
-        feed.includeHistoricalEntries();
-        feed.setNumEntries(count);
-      }
-
-      feed.load(function (response) {
+      feednami.loadGoogleFormat(feedURL, function (response) {
         if (response.error) {
           deferred.reject(response.error);
         }
@@ -143,6 +138,7 @@ angular.module('feeds-services', []).factory('feedService', ['$q', '$sce', 'feed
       hasCache: hasCache
     };
   });
+
 angular.module('feeds').run(['$templateCache', function($templateCache) {
   'use strict';
 
@@ -153,7 +149,7 @@ angular.module('feeds').run(['$templateCache', function($templateCache) {
     "    </div>\n" +
     "\n" +
     "    <ul class=\"media-list\">\n" +
-    "        <li ng-repeat=\"feed in feeds | orderBy:publishedDate:reverse\" class=\"media\">\n" +
+    "        <li ng-repeat=\"feed in feeds | orderBy:publishedDate:reverse | limitTo:count \" class=\"media\">\n" +
     "            <div class=\"media-body\">\n" +
     "                <h4 class=\"media-heading\"><a target=\"_new\" href=\"{{feed.link}}\" ng-bind-html=\"feed.title\"></a></h4>\n" +
     "                <p ng-bind-html=\"!summary ? feed.content : feed.contentSnippet\"></p>\n" +

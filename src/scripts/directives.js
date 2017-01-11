@@ -16,6 +16,7 @@ angular.module('feeds-directives', []).directive('feed', ['feedService', '$compi
       });
 
       $scope.feeds = [];
+      $scope.count = $attrs.count;
 
       var spinner = $templateCache.get('feed-spinner.html');
       $element.append($compile(spinner)($scope));
@@ -46,7 +47,7 @@ angular.module('feeds-directives', []).directive('feed', ['feedService', '$compi
         }).finally(function () {
           $element.find('.spinner').slideUp();
           $scope.$evalAsync('finishedLoading = true')
-        });          
+        });
       });
     }]
   }

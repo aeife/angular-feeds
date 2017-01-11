@@ -25,13 +25,7 @@ angular.module('feeds-services', []).factory('feedService', ['$q', '$sce', 'feed
         deferred.resolve(entries);
       }
 
-      var feed = new google.feeds.Feed(feedURL);
-      if (count) {
-        feed.includeHistoricalEntries();
-        feed.setNumEntries(count);
-      }
-
-      feed.load(function (response) {
+      feednami.loadGoogleFormat(feedURL, function (response) {
         if (response.error) {
           deferred.reject(response.error);
         }
